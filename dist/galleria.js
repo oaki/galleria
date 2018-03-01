@@ -2854,9 +2854,9 @@ Galleria.prototype = {
                     // Height was probably not set, raise hard errors
 
                     if ( testHeight() ) {
-                        Galleria.raise('Could not extract sufficient width/height of the gallery container. Traced measures: width:' + num.width + 'px, height: ' + num.height + 'px.', true);
+                        Galleria.raise('Could not extract sufficient width/height of the gallery container. Traced measures: width:' + num.width + 'px, height: ' + num.height + 'px.', true, self);
                     } else {
-                        Galleria.raise('Could not extract a stage height from the CSS. Traced height: ' + testHeight() + 'px.', true);
+                        Galleria.raise('Could not extract a stage height from the CSS. Traced height: ' + testHeight() + 'px.', true, self);
                     }
                 },
                 timeout: typeof this._options.wait == 'number' ? this._options.wait : false
