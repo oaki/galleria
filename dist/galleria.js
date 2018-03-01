@@ -5706,9 +5706,9 @@ Galleria.addTheme = function( theme ) {
     if ( typeof theme.css === 'string' ) {
 
         // look for manually added CSS
-        $('link').each(function( i, link ) {
+        $('link, style').each(function( i, tag ) {
             reg = new RegExp( theme.css );
-            if ( reg.test( link.href ) ) {
+            if ( reg.test( tag.href ) || reg.test( tag.getAttribute('data-theme') )) {
 
                 // we found the css
                 css = true;
@@ -6000,9 +6000,11 @@ Galleria.ready.callbacks = [];
     @param {string} msg The message to throw
 
     @param {boolean} [fatal] Set this to true to override debug settings and display a fatal error
+
+    @param {Object|undefined} instance The instance to show error
 */
 
-Galleria.raise = function( msg, fatal ) {
+Galleria.raise = function( msg, fatal, instance ) {
 
     var type = fatal ? 'Fatal error' : 'Error',
 
@@ -6014,6 +6016,19 @@ Galleria.raise = function( msg, fatal ) {
             zIndex: 100000
         },
 
+        addError = function ( singleInstance, html ) {
+            var cont = singleInstance.$( 'errors' ),
+                target = singleInstance.$( 'target' );
+
+            if ( !cont.length ) {
+
+                target.css( 'position', 'relative' );
+
+                cont = singleInstance.addElement( 'errors' ).appendChild( 'target', 'errors' ).$( 'errors' ).css(css);
+            }
+            cont.append( html );
+        }
+
         echo = function( msg ) {
 
             var html = '<div style="padding:4px;margin:0 0 2px;background:#' +
@@ -6021,24 +6036,19 @@ Galleria.raise = function( msg, fatal ) {
                 ( fatal ? '<strong>' + type + ': </strong>' : '' ) +
                 msg + '</div>';
 
-            $.each( _instances, function() {
+            if (typeof instance !== 'undefined') {
+                addError(instance, html);
+            } else {
+                $.each( _instances, function() {
 
-                var cont = this.$( 'errors' ),
-                    target = this.$( 'target' );
+                    addError(this, html);
+                });
 
-                if ( !cont.length ) {
-
-                    target.css( 'position', 'relative' );
-
-                    cont = this.addElement( 'errors' ).appendChild( 'target', 'errors' ).$( 'errors' ).css(css);
+                if ( !_instances.length ) {
+                    $('<div>').css( $.extend( css, { position: 'fixed' } ) ).append( html ).appendTo( DOM().body );
                 }
-                cont.append( html );
-
-            });
-
-            if ( !_instances.length ) {
-                $('<div>').css( $.extend( css, { position: 'fixed' } ) ).append( html ).appendTo( DOM().body );
             }
+
         };
 
     // if debug is on, display errors and throw exception if fatal
