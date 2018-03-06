@@ -375,10 +375,24 @@ var doc    = window.document,
                 return arr;
             },
 
-            getScriptPath : function( src ) {
+            getScriptPath : function( pathHint, scriptSrc ) {
 
-                // the currently executing script is always the last
-                src = src || $('script:last').attr('src');
+                if (!pathHint) {
+                    return '';
+                }
+
+                var src = scriptSrc || '';
+                if (!src) {
+                    var script = $('script').filter(function (index, element) {
+                        var src = element.getAttribute('src');
+                        return src && src.indexOf(pathHint) !== -1;
+                    });
+
+                    if (script.length) {
+                        src = script.attr('src');
+                    }
+                }
+
                 var slices = src.split('/');
 
                 if (slices.length == 1) {

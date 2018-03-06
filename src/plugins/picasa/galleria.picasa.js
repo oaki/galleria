@@ -15,7 +15,7 @@
 Galleria.requires(1.25, 'The Picasa Plugin requires Galleria version 1.2.5 or later.');
 
 // The script path
-var PATH = Galleria.utils.getScriptPath();
+var PATH = Galleria.utils.getScriptPath('/galleria.picasa');
 
 /**
 
